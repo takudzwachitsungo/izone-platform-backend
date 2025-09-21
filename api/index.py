@@ -1,45 +1,19 @@
-# Minimal Vercel handler that works
-import os
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from mangum import Mangum
 
-# Create minimal FastAPI app
-app = FastAPI(
-    title="iZonehub API",
-    version="1.0.0",
-    description="API for iZonehub Makerspace"
-)
-
-# Configure CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = FastAPI()
 
 @app.get("/")
-async def root():
-    return {
-        "message": "Welcome to iZonehub API", 
-        "status": "running",
-        "environment": "vercel",
-        "version": "1.0.0"
-    }
+def read_root():
+    return {"message": "Hello from iZonehub API on Vercel!", "status": "working"}
 
 @app.get("/health")
-async def health():
-    return {"status": "healthy"}
+def health():
+    return {"status": "healthy", "platform": "vercel"}
 
-@app.get("/test")
-async def test():
-    return {"message": "API is working on Vercel!"}
+@app.get("/api/test")
+def test():
+    return {"message": "API endpoint working!", "success": True}
 
-# Basic auth endpoint for testing
-@app.post("/api/auth/test")
-async def test_auth():
-    return {"message": "Auth endpoint working"}
-
-# Export for Vercel
-handler = app
+# Wrap FastAPI app with Mangum for serverless
+handler = Mangum(app)
