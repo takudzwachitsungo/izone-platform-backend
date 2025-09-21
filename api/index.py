@@ -1,19 +1,38 @@
-from fastapi import FastAPI
-from mangum import Mangum
+from http.server import BaseHTTPRequestHandler
+import json
 
-app = FastAPI()
-
-@app.get("/")
-def read_root():
-    return {"message": "Hello from iZonehub API on Vercel!", "status": "working"}
-
-@app.get("/health")
-def health():
-    return {"status": "healthy", "platform": "vercel"}
-
-@app.get("/api/test")
-def test():
-    return {"message": "API endpoint working!", "success": True}
-
-# Wrap FastAPI app with Mangum for serverless
-handler = Mangum(app)
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = {
+                "message": "Hello from iZonehub API on Vercel!",
+                "status": "working",
+                "platform": "vercel"
+            }
+            self.wfile.write(json.dumps(response).encode())
+            return
+        
+        elif self.path == '/health':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = {"status": "healthy", "platform": "vercel"}
+            self.wfile.write(json.dumps(response).encode())
+            return
+        
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = {"error": "Not found"}
+            self.wfile.write(json.dumps(response).encode())
+    
+    def do_POST(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        response = {"message": "POST endpoint working"}
+        self.wfile.write(json.dumps(response).encode())
