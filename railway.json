@@ -1,0 +1,27 @@
+{
+  "name": "izonehub-backend",
+  "description": "iZonehub Makerspace Backend API",
+  "build": {
+    "commands": [
+      "pip install -r requirements.txt",
+      "python create_tables.py"
+    ]
+  },
+  "deploy": {
+    "startCommand": "python main.py",
+    "healthcheckPath": "/api/health"
+  },
+  "env": {
+    "DEBUG": {
+      "description": "Debug mode",
+      "value": "False"
+    },
+    "SECRET_KEY": {
+      "description": "Secret key for JWT tokens",
+      "generate": true
+    },
+    "SMTP_PASSWORD": {
+      "description": "Gmail app password for email service"
+    }
+  }
+}
